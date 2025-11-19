@@ -2,6 +2,7 @@
   "name": "AH_Appium_TS",
   "version": "1.0.0",
   "description": "TypeScript mobile automation framework with WebdriverIO, Appium and BrowserStack",
+  "type": "commonjs",
   "private": true,
   "scripts": {
     "setup": "npm install",
