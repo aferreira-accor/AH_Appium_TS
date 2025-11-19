@@ -1,0 +1,78 @@
+{
+  "androidInhouse": {
+    "daily": {
+      "app": {
+        "app_name": "app-google-inHouse-release-bitrise-signed.apk",
+        "app_version": "10.75.0",
+        "app_url": "bs://ff118c9c7b5ca1eff3950b9d741345558b2afea3",
+        "app_id": "ff118c9c7b5ca1eff3950b9d741345558b2afea3",
+        "uploaded_at": "2025-11-18 19:19:36 UTC",
+        "custom_id": "stable-build_googleInHouseRelease_10.75.0.25111803",
+        "shareable_id": "androidautomate1/stable-build_googleInHouseRelease_10.75.0.25111803"
+      },
+      "timestamp": 1763541884291
+    },
+    "release": {
+      "app": {
+        "app_name": "app-google-inHouse-release-bitrise-signed.apk",
+        "app_version": "10.74.2",
+        "app_url": "bs://e53e7995d46c507f110451019eda2d0425a8a81c",
+        "app_id": "e53e7995d46c507f110451019eda2d0425a8a81c",
+        "uploaded_at": "2025-11-14 17:20:34 UTC",
+        "custom_id": "PipelineGoogleInHouseRelease_googleInHouseRelease_10.74.2.25111406",
+        "shareable_id": "androidautomate1/PipelineGoogleInHouseRelease_googleInHouseRelease_10.74.2.25111406"
+      },
+      "timestamp": 1763541884291
+    }
+  },
+  "androidStore": {
+    "app": {
+      "app_name": "app-google-prod-release-bitrise-signed.apk",
+      "app_version": "10.74.2",
+      "app_url": "bs://3639360f3bba7a5f1c6a33d7b161c604f4a01491",
+      "app_id": "3639360f3bba7a5f1c6a33d7b161c604f4a01491",
+      "uploaded_at": "2025-11-14 17:19:23 UTC",
+      "custom_id": "PipelineGoogleProdRelease_googleProdRelease_10.74.2.25111406",
+      "shareable_id": "androidautomate1/PipelineGoogleProdRelease_googleProdRelease_10.74.2.25111406"
+    },
+    "timestamp": 1763541885627
+  },
+  "iosSandbox": {
+    "daily": {
+      "app": {
+        "app_name": "AccorHotelsApp - Sandbox-SandboxDevelopmentRelease-251118.38519.ipa",
+        "app_version": "13.75.0",
+        "app_url": "bs://c043ea28b2058065cc61984db87b1ccc2838c5a0",
+        "app_id": "c043ea28b2058065cc61984db87b1ccc2838c5a0",
+        "uploaded_at": "2025-11-18 17:02:53 UTC",
+        "custom_id": "stable_AccorHotelsApp-SandboxDevelopmentRelease-13.75.0.251118.38519.ipa",
+        "shareable_id": "iosautomate1/stable_AccorHotelsApp-SandboxDevelopmentRelease-13.75.0.251118.38519.ipa"
+      },
+      "timestamp": 1763541887567
+    },
+    "release": {
+      "app": {
+        "app_name": "AccorHotelsApp - Sandbox-SandboxDevelopmentRelease-251114.38449.ipa",
+        "app_version": "13.74.1",
+        "app_url": "bs://487d596fd17469896b7eeb3d2cb52e9ce5ea4f8f",
+        "app_id": "487d596fd17469896b7eeb3d2cb52e9ce5ea4f8f",
+        "uploaded_at": "2025-11-14 17:54:06 UTC",
+        "custom_id": "Pipeline_AccorHotelsApp-SandboxDevelopmentRelease-13.74.1.251114.38449.ipa",
+        "shareable_id": "iosautomate1/Pipeline_AccorHotelsApp-SandboxDevelopmentRelease-13.74.1.251114.38449.ipa"
+      },
+      "timestamp": 1763541887567
+    }
+  },
+  "iosStore": {
+    "app": {
+      "app_name": "AccorHotelsApp - Store-Store-251105.38112.ipa",
+      "app_version": "13.73.1",
+      "app_url": "bs://b3cd3695d314dd48ac3392be59a47532dec806aa",
+      "app_id": "b3cd3695d314dd48ac3392be59a47532dec806aa",
+      "uploaded_at": "2025-11-05 10:11:04 UTC",
+      "custom_id": "Pipeline_AccorHotelsApp-Store-13.73.1.251105.38112.ipa",
+      "shareable_id": "iosautomate1/Pipeline_AccorHotelsApp-Store-13.73.1.251105.38112.ipa"
+    },
+    "timestamp": 1763130950452
+  }
+}

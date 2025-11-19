@@ -1,0 +1,92 @@
+{
+  "iosDevices": {
+    "devices": [
+      {
+        "name": "iPad Air 13 2025",
+        "version": "26"
+      },
+      {
+        "name": "iPad 9th",
+        "version": "18"
+      },
+      {
+        "name": "iPhone 14",
+        "version": "26"
+      },
+      {
+        "name": "iPhone 14 Pro",
+        "version": "26"
+      },
+      {
+        "name": "iPhone 15",
+        "version": "26"
+      },
+      {
+        "name": "iPhone 12 Pro",
+        "version": "18"
+      },
+      {
+        "name": "iPhone 13",
+        "version": "18"
+      },
+      {
+        "name": "iPhone 13 Pro Max",
+        "version": "18"
+      },
+      {
+        "name": "iPhone 12",
+        "version": "17"
+      },
+      {
+        "name": "iPhone 12 Pro",
+        "version": "17"
+      }
+    ],
+    "timestamp": 1763541890251
+  },
+  "androidDevices": {
+    "devices": [
+      {
+        "name": "Samsung Galaxy Tab S11",
+        "version": "16.0"
+      },
+      {
+        "name": "Samsung Galaxy Tab S10 Plus",
+        "version": "15.0"
+      },
+      {
+        "name": "Google Pixel 10",
+        "version": "16.0"
+      },
+      {
+        "name": "Google Pixel 10 Pro",
+        "version": "16.0"
+      },
+      {
+        "name": "Google Pixel 10 Pro XL",
+        "version": "16.0"
+      },
+      {
+        "name": "OnePlus 13R",
+        "version": "15.0"
+      },
+      {
+        "name": "Samsung Galaxy S25",
+        "version": "15.0"
+      },
+      {
+        "name": "Samsung Galaxy S25 Ultra",
+        "version": "15.0"
+      },
+      {
+        "name": "OnePlus 12R",
+        "version": "14.0"
+      },
+      {
+        "name": "Samsung Galaxy S24",
+        "version": "14.0"
+      }
+    ],
+    "timestamp": 1763541891584
+  }
+}
