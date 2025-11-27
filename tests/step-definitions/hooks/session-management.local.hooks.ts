@@ -98,8 +98,8 @@ if (!isLocalMode()) {
           newCaps['appium:locale'] = locale;
         }
       } else {
-        // No locale tags - just reload to show configuration screen (android-inhouse)
-        console.log(`\n[LOCAL] 🔄 Reloading session for scenario #${scenarioCount} (android-inhouse without locale)`);
+        // No locale tags - reload session anyway to ensure 1 scenario = 1 session
+        console.log(`\n[LOCAL] 🔄 Reloading session for scenario #${scenarioCount} (no locale tags)`);
         console.log(`[LOCAL]    Scenario: ${scenario.pickle.name}`);
       }
 
