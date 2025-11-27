@@ -150,7 +150,7 @@ const APP_CONFIGS = {
     bundleId: "fr.accor.push.sandbox",
     getArguments: () => [
       "-debug_environment",
-      getEnv("IOS_SANDBOX_LOCAL_TEST_ENVIRONMENT")!,
+      getEnv("IOS_SANDBOX_LOCAL_TEST_ENVIRONMENT") || "rec2",
       "-debug_qa_enable_ids",
       "true",
     ],
@@ -281,7 +281,9 @@ function buildSingleIOSCapability(input: IOSCapabilityInput) {
     ...(input.extra || {}),
   };
 
-  if (input.args) cap["appium:arguments"] = input.args;
+  if (input.args) {
+    cap["appium:processArguments"] = { args: input.args };
+  }
 
   // Apply locale and language if provided
   if (input.locale) cap["appium:locale"] = input.locale;

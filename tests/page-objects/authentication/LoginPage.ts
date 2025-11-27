@@ -40,4 +40,37 @@ export class LoginPage extends BasePage {
     await this.waitForElement(loginButton);
     console.log(`[LOGIN] ✅ Login button found`);
   }
+
+  async attemptLogin(email: string, password: string): Promise<void> {
+    console.log(`[LOGIN] 🔐 Attempting login with email: ${email}`);
+
+    // Click on "Sign In" button to go to login form
+    const signInButton = driver.isIOS
+      ? this.selectors.ios.loginButton
+      : this.selectors.android.loginButton;
+    await this.waitAndTap(signInButton);
+    console.log(`[LOGIN] ✅ Clicked on Sign In button`);
+
+    // Wait for login form to appear
+    await driver.pause(2000);
+
+    // Fill email field
+    const emailField = await driver.$("accessibility id:loginFieldTitleLabel");
+    await emailField.addValue(email);
+    console.log(`[LOGIN] ✅ Email entered`);
+
+    // Fill password field
+    const passwordField = await driver.$("accessibility id:passwordField");
+    await passwordField.addValue(password);
+    console.log(`[LOGIN] ✅ Password entered`);
+
+    // Click on "Connexion" button
+    const connexionButton = await driver.$('-ios class chain:**/XCUIElementTypeButton[`name == "Connexion"`]');
+    await connexionButton.click();
+    console.log(`[LOGIN] ✅ Clicked on Connexion button`);
+
+    // Wait to see the result
+    await driver.pause(3000);
+    console.log(`[LOGIN] ⏳ Waiting for login result...`);
+  }
 }

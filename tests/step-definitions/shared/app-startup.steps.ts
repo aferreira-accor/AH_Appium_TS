@@ -1,7 +1,9 @@
 import { Given, When } from "@wdio/cucumber-framework";
 import { AppStartupPage } from "../../page-objects/navigation/AppStartupPage";
+import { LoginPage } from "../../page-objects/authentication/LoginPage";
 
 const appStartupPage = new AppStartupPage();
+const loginPage = new LoginPage();
 
 Given("The app is launched", async function () {
   console.log(`[APP STARTUP] 🚀 "Given The app is launched" step started`);
@@ -31,4 +33,9 @@ Given("The app is launched", async function () {
 
 When("I accept the cookies", async function () {
   await appStartupPage.acceptCookies();
+});
+
+When("I attempt to login with REC credentials", async function () {
+  console.log(`[STEP] Attempting login with REC account to verify environment`);
+  await loginPage.attemptLogin("classic_auto@yopmail.com", "Password1");
 });
