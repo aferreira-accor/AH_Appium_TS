@@ -149,6 +149,8 @@ const APP_CONFIGS = {
   iosSandbox: {
     bundleId: "fr.accor.push.sandbox",
     getArguments: () => [
+      "-debug_flushAuthToken",
+      "true",  // Clear auth tokens on app launch (enables fresh start between scenarios)
       "-debug_environment",
       getEnv("IOS_SANDBOX_LOCAL_TEST_ENVIRONMENT") || "rec2",
       "-debug_qa_enable_ids",
@@ -157,6 +159,12 @@ const APP_CONFIGS = {
   },
   iosStore: {
     bundleId: "fr.accor.push",
+    getArguments: () => [
+      "-debug_flushAuthToken",
+      "true",  // Clear auth tokens on app launch (enables fresh start between scenarios)
+      "-debug_qa_enable_ids",
+      "true",
+    ],
   },
   testflight: {
     bundleId: "com.apple.TestFlight",
@@ -274,7 +282,7 @@ function buildSingleIOSCapability(input: IOSCapabilityInput) {
     "appium:bundleId": input.bundleId,
     "appium:noReset": false,
     "appium:fullReset": false,
-    "appium:useNewWDA": true,
+    "appium:useNewWDA": false,  // Must be false for proper app reset (like Appium Inspector)
     "appium:showXcodeLog": true,
     "appium:newCommandTimeout": 300,
     "appium:webviewConnectTimeout": 5000,
@@ -517,6 +525,7 @@ export function generateLocalIosStoreCapabilities() {
       deviceName: device.deviceName,
       udid: device.udid,
       bundleId: APP_CONFIGS.iosStore.bundleId,
+      args: APP_CONFIGS.iosStore.getArguments(),
       locale: iosLocale,
       language: iosLanguage,
     })

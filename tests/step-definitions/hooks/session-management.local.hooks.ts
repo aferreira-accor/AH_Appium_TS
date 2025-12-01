@@ -10,8 +10,14 @@ import { getStoredCapabilities } from "../../support/capability-store";
  * - Scenarios without locale tags: Reuse session
  * - Scenarios with locale tags: Reload session + restart app with new locale
  *
- * This ensures the app is restarted with the correct locale and shows
- * the environment selection screen (REC2, etc.)
+ * IMPORTANT iOS LIMITATION:
+ * iOS does NOT have an API to clear app data on real devices.
+ * noReset: false does NOT work on iOS like it does on Android.
+ *
+ * Solutions for iOS app reset:
+ * 1. fullReset: true - Reinstalls app (slow)
+ * 2. App backdoor - Add process argument like "-debug_clear_data true"
+ *    that the iOS app detects and clears its own data (UserDefaults, Keychain, etc.)
  */
 
 // Only register hooks if we're in LOCAL mode
@@ -103,9 +109,27 @@ if (!isLocalMode()) {
         console.log(`[LOCAL]    Scenario: ${scenario.pickle.name}`);
       }
 
-      // Reload session - this will relaunch the app with new locale
-      // For android-inhouse: app launches on AppConfigurationActivity (LAUNCHER activity)
-      // Then the step "Given The app is launched" will select environment
+      // ========================================
+      // PLATFORM-SPECIFIC BEHAVIOR
+      // ========================================
+      // ANDROID INHOUSE:
+      //   1. browser.reloadSession() launches the app
+      //   2. Step "Given The app is launched" clicks on "debug_relaunchApp_button"
+      //      → This button RELAUNCHES the app with a FULL RESET (clears data)
+      //      → That's why we see OneTrust between scenarios on Android
+      //
+      // ANDROID STORE:
+      //   1. browser.reloadSession() clears app data and launches
+      //   2. No configuration screen, app starts fresh
+      //
+      // iOS (SANDBOX/STORE):
+      //   1. reloadSession() launches the app BUT DOES NOT CLEAR DATA
+      //   2. iOS has NO API to clear app data on real devices
+      //   3. Solutions:
+      //      - fullReset: true (slow, reinstalls app)
+      //      - App backdoor with "-debug_clear_data" process argument
+      // ========================================
+
       await browser.reloadSession(newCaps);
 
       if (locale && language) {
@@ -114,7 +138,7 @@ if (!isLocalMode()) {
         console.log(`[LOCAL] ✅ Session reloaded (same locale)`);
       }
 
-      console.log(`[LOCAL] ℹ️  App will launch with configuration screen (handled by 'Given The app is launched' step)`);
+      console.log(`[LOCAL] ℹ️  App ready for scenario execution`);
 
     } catch (error) {
       console.error(`[LOCAL] ❌ Error reloading local session:`, error);
