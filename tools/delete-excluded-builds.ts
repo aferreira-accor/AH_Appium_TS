@@ -51,10 +51,11 @@ async function deleteExcludedBuilds() {
       console.log(`  ✅ Success:`, response.data);
       successCount++;
       console.log("");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: unknown }; message?: string };
       console.log(
         `  ❌ Error:`,
-        error.response?.data || error.message
+        axiosError.response?.data || axiosError.message || String(error)
       );
       errorCount++;
       console.log("");

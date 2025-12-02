@@ -124,6 +124,13 @@ export function getLocaleConfig(localeId: string): LocaleConfig {
 }
 
 /**
+ * Cucumber DataTable interface for locale parsing
+ */
+interface LocaleDataTable {
+  hashes(): Array<{ language?: string; locale?: string; timezone?: string }>;
+}
+
+/**
  * Parse locale configuration from Gherkin data table
  * @param table - Cucumber data table with language, locale, timezone columns
  * @returns Locale configuration
@@ -132,7 +139,7 @@ export function getLocaleConfig(localeId: string): LocaleConfig {
  * | language | locale | timezone |
  * | fr       | fr_FR  | Paris    |
  */
-export function parseLocaleFromTable(table: any): LocaleConfig {
+export function parseLocaleFromTable(table: LocaleDataTable): LocaleConfig {
   // Get the data table as an array of hashes (objects)
   // First row is headers, second row is data
   const hashes = table.hashes();

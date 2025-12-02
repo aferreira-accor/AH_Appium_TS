@@ -1,6 +1,7 @@
 import { Before, After } from "@wdio/cucumber-framework";
 import { extractLocaleFromScenario, isLocalMode, logScenarioCompletion, requiresAppRestart } from "./session-management.shared";
 import { getStoredCapabilities } from "../../support/capability-store";
+import type { CucumberScenario, AppiumCapabilities } from "../../support/types";
 
 /**
  * Session Management Hooks - LOCAL MODE
@@ -66,7 +67,7 @@ if (!isLocalMode()) {
    * Reload session with new locale and restart the app
    */
   async function reloadSessionWithLocale(
-    scenario: any,
+    scenario: CucumberScenario,
     scenarioCount: number,
     locale?: string,
     language?: string,
@@ -81,7 +82,7 @@ if (!isLocalMode()) {
       }
 
       // Clone capabilities
-      const newCaps = JSON.parse(JSON.stringify(storedCaps)) as any;
+      const newCaps = JSON.parse(JSON.stringify(storedCaps)) as AppiumCapabilities;
       const isAndroid = newCaps.platformName === 'Android';
 
       // If locale/language provided, update capabilities
@@ -130,7 +131,7 @@ if (!isLocalMode()) {
       //      - App backdoor with "-debug_clear_data" process argument
       // ========================================
 
-      await browser.reloadSession(newCaps);
+      await browser.reloadSession(newCaps as Record<string, unknown>);
 
       if (locale && language) {
         console.log(`[LOCAL] ✅ Session reloaded with locale=${locale}, language=${language}`);

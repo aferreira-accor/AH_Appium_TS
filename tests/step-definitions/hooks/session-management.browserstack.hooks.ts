@@ -1,6 +1,7 @@
 import { Before, After } from "@wdio/cucumber-framework";
 import { extractLocaleFromScenario, isLocalMode, isParallelSplitMode, logScenarioCompletion } from "./session-management.shared";
 import { getStoredCapabilities } from "../../support/capability-store";
+import type { CucumberScenario, AppiumCapabilities } from "../../support/types";
 
 /**
  * Session Management Hooks - BROWSERSTACK MODE
@@ -45,7 +46,7 @@ if (isLocalMode()) {
   /**
    * Handle parallel split mode (1 scenario per worker, multi-locale support)
    */
-  async function handleParallelSplitMode(scenario: any, count: number): Promise<void> {
+  async function handleParallelSplitMode(scenario: CucumberScenario, count: number): Promise<void> {
     const { locale, language, timezone } = extractLocaleFromScenario(scenario);
 
     // First scenario: use existing session
@@ -81,7 +82,7 @@ if (isLocalMode()) {
       }
 
       // Clone capabilities and update with next device AND locale
-      const newCaps = JSON.parse(JSON.stringify(storedCaps)) as any;
+      const newCaps = JSON.parse(JSON.stringify(storedCaps)) as AppiumCapabilities;
       newCaps['appium:deviceName'] = nextDevice.name;
       newCaps['appium:platformVersion'] = nextDevice.version;
 
@@ -105,7 +106,7 @@ if (isLocalMode()) {
       console.log(`[BS PARALLEL] 🎯 Next device: ${nextDevice.name} (v${nextDevice.version})`);
 
       // Reload session with new device + locale
-      await browser.reloadSession(newCaps);
+      await browser.reloadSession(newCaps as Record<string, unknown>);
 
       console.log(`[BS PARALLEL] ✅ New BrowserStack session created: ${driver.sessionId}`);
 
@@ -128,7 +129,7 @@ if (isLocalMode()) {
   /**
    * Handle regular BrowserStack mode (multiple scenarios in one worker)
    */
-  async function handleRegularBrowserStackMode(scenario: any, count: number): Promise<void> {
+  async function handleRegularBrowserStackMode(scenario: CucumberScenario, count: number): Promise<void> {
     const { locale, language } = extractLocaleFromScenario(scenario);
 
     // First scenario: use existing session
@@ -164,14 +165,14 @@ if (isLocalMode()) {
       }
 
       // Clone capabilities and update with next device
-      const newCaps = JSON.parse(JSON.stringify(storedCaps)) as any;
+      const newCaps = JSON.parse(JSON.stringify(storedCaps)) as AppiumCapabilities;
       newCaps['appium:deviceName'] = nextDevice.name;
       newCaps['appium:platformVersion'] = nextDevice.version;
 
       console.log(`[BS] 🎯 Next device: ${nextDevice.name} (v${nextDevice.version})`);
 
       // Reload session with new device
-      await browser.reloadSession(newCaps);
+      await browser.reloadSession(newCaps as Record<string, unknown>);
 
       console.log(`[BS] ✅ New BrowserStack session created: ${driver.sessionId}`);
 

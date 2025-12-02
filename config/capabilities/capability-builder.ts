@@ -99,6 +99,8 @@ interface BrowserStackCapability {
     // Accessibility
     accessibility: boolean;
   };
+  // Allow additional properties for flexibility
+  [key: string]: unknown;
 }
 
 // Android app configuration shape

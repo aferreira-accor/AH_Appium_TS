@@ -1,6 +1,15 @@
 import { Given } from "@wdio/cucumber-framework";
 import { setActiveLocaleConfig } from "../../../config/capabilities/capability-builder";
 import { parseLocaleFromTable } from "../../../config/capabilities/locale-configs";
+import type { AppiumCapabilities } from "../../support/types";
+
+/**
+ * Cucumber DataTable interface for locale configuration
+ */
+interface LocaleDataTable {
+  hashes(): Array<{ language?: string; locale?: string; timezone?: string }>;
+  raw(): string[][];
+}
 
 /**
  * Cucumber step to configure locale settings for international testing
@@ -24,7 +33,7 @@ import { parseLocaleFromTable } from "../../../config/capabilities/locale-config
  */
 Given(
   "I configure the user environment with:",
-  async function (dataTable: any) {
+  async function (dataTable: LocaleDataTable) {
     // Parse locale configuration from Gherkin table
     const newLocaleConfig = parseLocaleFromTable(dataTable);
 
@@ -38,7 +47,7 @@ Given(
     setActiveLocaleConfig(newLocaleConfig);
 
     // Get current session capabilities to compare
-    const currentCapabilities = (driver as any).capabilities;
+    const currentCapabilities = driver.capabilities as AppiumCapabilities;
     const currentLanguage = currentCapabilities["appium:language"];
     const currentLocale = currentCapabilities["appium:locale"];
 
@@ -93,7 +102,7 @@ Given(
     setActiveLocaleConfig(newLocaleConfig);
 
     // Get current session capabilities
-    const currentCapabilities = (driver as any).capabilities;
+    const currentCapabilities = driver.capabilities as AppiumCapabilities;
     const currentLanguage = currentCapabilities["appium:language"];
     const currentLocale = currentCapabilities["appium:locale"];
 

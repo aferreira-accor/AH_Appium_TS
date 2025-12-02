@@ -3,17 +3,19 @@
  * Used by both local and BrowserStack session management
  */
 
+import type { CucumberScenario, CucumberTag } from "../../support/types";
+
 /**
  * Extract locale and language from scenario tags
  * @param scenario Cucumber scenario object
  * @returns Object with locale and language, or undefined if not found
  */
-export function extractLocaleFromScenario(scenario: any): {
+export function extractLocaleFromScenario(scenario: CucumberScenario): {
   locale?: string;
   language?: string;
   timezone?: string;
 } {
-  const tags = scenario.pickle.tags.map((tag: any) => tag.name);
+  const tags = scenario.pickle.tags.map((tag: CucumberTag) => tag.name);
 
   const localeTag = tags.find((tag: string) => tag.startsWith('@locale:'));
   const locale = localeTag ? localeTag.replace('@locale:', '') : undefined;
@@ -61,7 +63,7 @@ export function requiresAppRestart(): boolean {
  * @param scenario Cucumber scenario object
  * @param prefix Optional prefix for logs (e.g., "[LOCAL]", "[BS]")
  */
-export function logScenarioCompletion(scenario: any, prefix: string = '[SESSION]'): void {
+export function logScenarioCompletion(scenario: CucumberScenario, prefix: string = '[SESSION]'): void {
   const status = scenario.result?.status || 'UNKNOWN';
   const icon = status === 'PASSED' ? '✅' : '❌';
   console.log(`\n${prefix} ${icon} Scenario completed: ${scenario.pickle.name} (${status})`);

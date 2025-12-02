@@ -4,6 +4,7 @@ import { globSync } from 'glob';
 import type { Options } from "@wdio/types";
 import { findMatchingFeatureFile, countMatchingScenariosInFile } from "./utils/cucumber-tag-parser";
 import { type LocaleConfig } from "./locale-configs";
+import type { AppiumCapabilities, DeviceInfo, CapabilityGeneratorResult } from "../../tests/support/types";
 
 // Centralized BrowserStack project name used across all configurations
 // Used in both bstack:options (cloud dashboard) and testObservabilityOptions (analytics)
@@ -23,13 +24,13 @@ export interface BrowserStackConfigOptions {
   envPrefix: string;
 
   /** Function that generates capabilities for the specified session count */
-  capabilityGenerator: (sessionCount: number) => any[];
+  capabilityGenerator: (sessionCount: number) => AppiumCapabilities[];
 
   /** Optional function that generates capabilities with specific locales */
-  capabilityGeneratorWithLocales?: (localeConfigs: LocaleConfig[]) => { capabilities: any[]; deviceSelection: any[] };
+  capabilityGeneratorWithLocales?: (localeConfigs: LocaleConfig[]) => CapabilityGeneratorResult;
 
   /** Optional overrides for BrowserStack service configuration */
-  serviceOverrides?: Record<string, any>;
+  serviceOverrides?: Record<string, unknown>;
 
   /** Optional overrides for WebdriverIO configuration */
   configOverrides?: Partial<Options.Testrunner>;
@@ -98,7 +99,7 @@ export function createBrowserStackConfig(
 
     // Parse locale directories and build configurations
     const localeConfigs: Array<LocaleConfig & { specsPath: string }> = [];
-    let capabilities: any[];
+    let capabilities: AppiumCapabilities[];
 
     if (subdirectories.length > 0) {
 
@@ -131,7 +132,7 @@ export function createBrowserStackConfig(
       capabilities = result.capabilities;
 
       // Store device pool info in each capability's metadata
-      const devicePoolData = result.deviceSelection.map((d: any) => ({ name: d.name, version: d.version }));
+      const devicePoolData = result.deviceSelection.map((d: DeviceInfo) => ({ name: d.name, version: d.version }));
 
       // Only log device pool details in main process
       if (!isWorker) {
@@ -139,7 +140,7 @@ export function createBrowserStackConfig(
       }
 
       // Add spec filtering and device pool metadata to each capability
-      capabilities.forEach((cap: any, index: number) => {
+      capabilities.forEach((cap: AppiumCapabilities, index: number) => {
         // Filter specs for this specific locale
         cap.specs = [localeConfigs[index].specsPath];
 
@@ -149,7 +150,7 @@ export function createBrowserStackConfig(
 
         // Add device pool metadata for beforeSession hook
         if (cap['appium:options']) {
-          (cap['appium:options'] as any).wdioDevicePool = devicePoolData;
+          cap['appium:options'].wdioDevicePool = devicePoolData;
         }
       });
 

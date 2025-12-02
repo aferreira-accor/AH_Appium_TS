@@ -115,10 +115,11 @@ async function getAndIncrementCounter(): Promise<number> {
     // Write updated data back atomically
     fs.writeFileSync(COUNTER_FILE, JSON.stringify(newData, null, 2), 'utf8');
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     // If lock acquisition fails after all retries, use fallback
     console.warn('[DEVICE ROTATION] Failed to acquire lock after retries, using fallback');
-    console.warn(`[DEVICE ROTATION] Error: ${error.message}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.warn(`[DEVICE ROTATION] Error: ${errorMessage}`);
 
     // Improved fallback: combine timestamp + process ID for uniqueness
     // This virtually eliminates collision risk (< 0.001%)
