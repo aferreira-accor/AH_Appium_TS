@@ -4,7 +4,7 @@
 
 **Projet :** Framework de tests automatisés mobile (Android + iOS)
 **Stack :** TypeScript + WebDriverIO + Appium + Cucumber + BrowserStack
-**Taille :** 44 fichiers TS, ~6,600 lignes de code, 7 feature files
+**Taille :** 45 fichiers TS, ~6,800 lignes de code, 7 feature files
 **Configurations :** 4 builds × 2 envs (BrowserStack + Local) = 11 scripts de test
 
 ---
@@ -283,7 +283,8 @@ AH_Appium_TS/
 │   │       └── locale.hooks.ts
 │   ├── page-objects/                     # Page Object Model
 │   └── support/
-│       └── capability-store.ts           # ⭐ Device rotation counter
+│       ├── capability-store.ts           # ⭐ Device rotation counter
+│       └── types.ts                      # Types partagés (Cucumber, Appium)
 ├── .tmp/
 │   ├── parallel-specs/                   # Scénarios splittés
 │   │   ├── fr_FR__fr__Paris/
@@ -475,6 +476,21 @@ try {
 
 **Exemples de types définis :**
 ```typescript
+// tests/support/types.ts (types partagés)
+interface CucumberScenario {
+  pickle: CucumberPickle;
+  result?: CucumberResult;
+  gherkinDocument?: {...};
+}
+
+interface AppiumCapabilities {
+  platformName: string;
+  'appium:deviceName'?: string;
+  'appium:language'?: string;
+  'appium:locale'?: string;
+  [key: string]: unknown;
+}
+
 // capability-builder.ts
 interface LocaleConfig {
   locale: string;
@@ -550,21 +566,14 @@ Warning: Failed to load the ES module: .../ios-sandbox.browserstack.conf.ts
 
 ---
 
-### **2. ESLint warnings sur `any`** ⚠️ **(Qualité code)**
+### **2. ESLint warnings sur `any`** ✅ **(Corrigé)**
 
-**Symptôme :**
-```
-20 warnings sur @typescript-eslint/no-explicit-any
-```
+**Status :** ✅ **RÉSOLU** - Tous les warnings `@typescript-eslint/no-explicit-any` ont été corrigés.
 
-**Fichiers concernés :**
-- `browserstack-config-builder.ts` (8 warnings)
-- `session-management.hooks.ts` (6 warnings)
-- `locale-configuration.steps.ts` (3 warnings)
-
-**Impact :** Perte de type safety sur ces variables
-
-**Solution :** Typer correctement avec les interfaces WDIO/Appium
+**Solution appliquée :**
+- Création de `tests/support/types.ts` avec types partagés (`CucumberScenario`, `AppiumCapabilities`, etc.)
+- Remplacement de `any` par `unknown` pour les `catch (error)`
+- Typage explicite des fonctions et paramètres
 
 ---
 
@@ -619,7 +628,6 @@ Warning: Failed to load the ES module: .../ios-sandbox.browserstack.conf.ts
 
 **Points à améliorer :**
 - ⚠️ Warning WDIO cosmétique (non bloquant)
-- ⚠️ 20 warnings ESLint `any` (qualité code)
 - 📝 README.md à créer (documentation)
 
 ---
@@ -644,7 +652,6 @@ L'architecture est **solide, professionnelle et maintenable**. Les quelques warn
 
 ### **1. Court terme**
 - Résoudre warning WDIO (précompilation des configs)
-- Fixer les 20 warnings ESLint `any`
 - Créer README.md
 
 ### **2. Moyen terme**
