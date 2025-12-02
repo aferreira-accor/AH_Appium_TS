@@ -4,7 +4,7 @@
 
 **Projet :** Framework de tests automatisés mobile (Android + iOS)
 **Stack :** TypeScript + WebDriverIO + Appium + Cucumber + BrowserStack
-**Taille :** 42 fichiers TS, ~5,600 lignes de code, 6 feature files
+**Taille :** 44 fichiers TS, ~6,600 lignes de code, 7 feature files
 **Configurations :** 4 builds × 2 envs (BrowserStack + Local) = 11 scripts de test
 
 ---
@@ -70,8 +70,11 @@ maxInstances: sessionCount  // WDIO limite les workers
 **Objectif :** Chaque scénario crée une session BrowserStack indépendante
 
 **Implémentation :**
-- `tools/split-scenarios.ts:183-288` - Split les scénarios en fichiers individuels
-- `tests/step-definitions/hooks/session-management.hooks.ts:14-26` - Recharge la session par scénario
+
+- `tools/split-scenarios.ts:175-266` - Split les scénarios en fichiers individuels
+- `tests/step-definitions/hooks/session-management.browserstack.hooks.ts` - Recharge la session par scénario (BrowserStack)
+- `tests/step-definitions/hooks/session-management.local.hooks.ts` - Gestion sessions locales
+- `tests/step-definitions/hooks/session-management.shared.ts` - Fonctions partagées
 
 **Mécanisme :**
 
@@ -113,8 +116,9 @@ maxInstances: sessionCount  // WDIO limite les workers
 **Objectif :** Round-robin sur un pool de 10 devices
 
 **Implémentation :**
-- `tests/support/capability-store.ts:90-140` - Gestion du counter inter-process
-- `config/capabilities/capability-builder.ts:35-50` - Détermine la taille du pool (1 ou 10)
+
+- `tests/support/capability-store.ts:61-139` - Gestion du counter inter-process avec lockfile
+- `config/capabilities/capability-builder.ts:363-422` - Détermine la taille du pool (1 ou 10)
 - `.tmp/device-counter-{config}.json` - Counter séparé par configuration
 
 **Mécanisme :**
@@ -270,10 +274,12 @@ AH_Appium_TS/
 │   ├── cache-manager.ts                  # Gestion cache
 │   └── ...
 ├── tests/
-│   ├── features/                         # 6 fichiers .feature
+│   ├── features/                         # 7 fichiers .feature
 │   ├── step-definitions/
 │   │   └── hooks/
-│   │       ├── session-management.hooks.ts  # ⭐ Reload session
+│   │       ├── session-management.browserstack.hooks.ts  # ⭐ Reload session (BrowserStack)
+│   │       ├── session-management.local.hooks.ts         # ⭐ Reload session (Local)
+│   │       ├── session-management.shared.ts              # Fonctions partagées
 │   │       └── locale.hooks.ts
 │   ├── page-objects/                     # Page Object Model
 │   └── support/
@@ -376,13 +382,14 @@ T=30s:
 
 ### ✅ **1. Séparation des responsabilités (SOLID)**
 
-| Fichier | Responsabilité | Ligne de code |
-|---------|---------------|---------------|
-| `run-parallel-tests.ts` | Orchestration | 128 lignes |
-| `split-scenarios.ts` | Splitting logique | 288 lignes |
-| `capability-store.ts` | Device rotation | 195 lignes |
-| `browserstack-config-builder.ts` | Config BrowserStack | 367 lignes |
-| `capability-builder.ts` | Génération capabilities | 450+ lignes |
+| Fichier | Responsabilité | Lignes de code |
+|---------|---------------|----------------|
+| `run-parallel-tests.ts` | Orchestration | ~130 lignes |
+| `split-scenarios.ts` | Splitting logique | ~285 lignes |
+| `capability-store.ts` | Device rotation | ~230 lignes |
+| `browserstack-config-builder.ts` | Config BrowserStack | ~400 lignes |
+| `capability-builder.ts` | Génération capabilities | ~575 lignes |
+| `local-capability-builder.ts` | Capabilities locales | ~535 lignes |
 
 **Chaque fichier a UNE responsabilité claire** ✅
 
@@ -501,6 +508,29 @@ interface DualBuildCache {
 ---
 
 ## ⚠️ POINTS D'AMÉLIORATION POTENTIELS
+
+### **0. Limitation iOS Store** ❌ **(Bloquant)**
+
+**iOS Store ne supporte AUCUN process argument !**
+
+Le build Store (`store.xcconfig`) n'a aucun flag de debug :
+```
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = PRODUCTION INSTABUGLIVE RELEASE
+```
+
+| Fonctionnalité | iOS Sandbox | iOS Store |
+|----------------|-------------|-----------|
+| `-debug_qa_enable_ids` | ✅ | ❌ Ignoré |
+| `-debug_environment` | ✅ | ❌ Ignoré |
+| `-debug_flushAuthToken` | ✅ | ❌ Ignoré |
+| Accessibility IDs | ✅ Activables | ❌ Impossibles |
+| Reset entre scénarios | ⚠️ Logout only | ❌ Aucun |
+
+**Impact :** Les tests automatisés sur iOS Store sont très limités.
+
+**Voir :** `docs/IOS_ANDROID_RESET_DIFFERENCES.md` pour détails et alternatives.
+
+---
 
 ### **1. Warning WDIO avec fichiers .ts** ⚠️ **(Cosmétique)**
 
@@ -639,4 +669,4 @@ L'architecture est **solide, professionnelle et maintenable**. Les quelques warn
 - [TypeScript](https://www.typescriptlang.org/) - Type safety
 - [proper-lockfile](https://www.npmjs.com/package/proper-lockfile) - Inter-process locking
 
-**Date de dernière mise à jour :** 19 novembre 2025
+**Date de dernière mise à jour :** 2 décembre 2025
