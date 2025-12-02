@@ -159,12 +159,13 @@ const APP_CONFIGS = {
   },
   iosStore: {
     bundleId: "fr.accor.push",
-    getArguments: () => [
-      "-debug_flushAuthToken",
-      "true",  // Clear auth tokens on app launch (enables fresh start between scenarios)
-      "-debug_qa_enable_ids",
-      "true",
-    ],
+    // ⚠️ iOS Store (build RELEASE) n'a AUCUN flag de debug compilé !
+    // Tous les process arguments sont ignorés :
+    // - debug_qa_enable_ids → requiert DEBUG_QA_ID_ENABLE (absent en Store)
+    // - debug_environment → requiert DEBUG_QA_PERSIST_SETTINGS (absent en Store)
+    // - debug_flushAuthToken → requiert !RELEASE (RELEASE est défini en Store)
+    // Voir docs/IOS_ANDROID_RESET_DIFFERENCES.md pour détails
+    getArguments: () => [],  // Aucun argument utile en Store
   },
   testflight: {
     bundleId: "com.apple.TestFlight",
