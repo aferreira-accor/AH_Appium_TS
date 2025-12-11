@@ -6,10 +6,19 @@ export class LoginPage extends BasePage {
     android: {
       loginButton:
         'android=new UiSelector().resourceId("engage_loginOnboarding_signIn_button")',
+      emailField:
+        'android=new UiSelector().resourceId("engage_login_engage_login_login_input_input").childSelector(new UiSelector().className("android.widget.EditText"))',
+      passwordField:
+        'android=new UiSelector().resourceId("engage_login_engage_login_password_input_input").childSelector(new UiSelector().className("android.widget.EditText"))',
+      submitButton:
+        'android=new UiSelector().resourceId("engage_login_logInWithEmailOrCardNumber_button")',
     },
     ios: {
-      loginButton:
-        '-ios class chain:**/XCUIElementTypeButton[`name == "loginAccessSignInButton"`]',
+      loginButton: "accessibility id:loginAccessSignInButton",
+      emailField: "accessibility id:loginFieldTitleLabel",
+      passwordField: "accessibility id:passwordField",
+      submitButton:
+        '-ios class chain:**/XCUIElementTypeCell[`name == "confirmationButtonField"`]/**/XCUIElementTypeButton',
     },
   };
 
@@ -55,17 +64,26 @@ export class LoginPage extends BasePage {
     await driver.pause(2000);
 
     // Fill email field
-    const emailField = await driver.$("accessibility id:loginFieldTitleLabel");
+    const emailSelector = driver.isIOS
+      ? this.selectors.ios.emailField
+      : this.selectors.android.emailField;
+    const emailField = await driver.$(emailSelector);
     await emailField.addValue(email);
     console.log(`[LOGIN] ✅ Email entered`);
 
     // Fill password field
-    const passwordField = await driver.$("accessibility id:passwordField");
+    const passwordSelector = driver.isIOS
+      ? this.selectors.ios.passwordField
+      : this.selectors.android.passwordField;
+    const passwordField = await driver.$(passwordSelector);
     await passwordField.addValue(password);
     console.log(`[LOGIN] ✅ Password entered`);
 
     // Click on "Connexion" button
-    const connexionButton = await driver.$('-ios class chain:**/XCUIElementTypeButton[`name == "Connexion"`]');
+    const submitSelector = driver.isIOS
+      ? this.selectors.ios.submitButton
+      : this.selectors.android.submitButton;
+    const connexionButton = await driver.$(submitSelector);
     await connexionButton.click();
     console.log(`[LOGIN] ✅ Clicked on Connexion button`);
 
