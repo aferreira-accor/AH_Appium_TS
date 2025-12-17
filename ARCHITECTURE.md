@@ -4,7 +4,7 @@
 
 **Projet :** Framework de tests automatisés mobile (Android + iOS)
 **Stack :** TypeScript + WebDriverIO + Appium + Cucumber + BrowserStack
-**Taille :** 45 fichiers TS, ~6,800 lignes de code, 7 feature files
+**Taille :** 50 fichiers TS, ~6,900 lignes de code, 7 feature files
 **Configurations :** 4 builds × 2 envs (BrowserStack + Local) = 11 scripts de test
 
 ---
@@ -271,8 +271,13 @@ AH_Appium_TS/
 ├── tools/
 │   ├── run-parallel-tests.ts             # ⭐ Entry point tests parallèles
 │   ├── split-scenarios.ts                # ⭐ Split scénarios
-│   ├── cache-manager.ts                  # Gestion cache
-│   └── ...
+│   ├── cache-manager.ts                  # CLI cache (171 lignes)
+│   └── cache/                            # ⭐ Module cache refactoré
+│       ├── index.ts                      # Exports
+│       ├── device-selection.ts           # Algo sélection devices (181 lignes)
+│       ├── app-cache.ts                  # Gestion cache apps (232 lignes)
+│       ├── device-cache.ts               # Gestion cache devices (231 lignes)
+│       └── cache-display.ts              # Affichage cache (218 lignes)
 ├── tests/
 │   ├── features/                         # 7 fichiers .feature
 │   ├── step-definitions/
@@ -391,8 +396,15 @@ T=30s:
 | `browserstack-config-builder.ts` | Config BrowserStack | ~400 lignes |
 | `capability-builder.ts` | Génération capabilities | ~575 lignes |
 | `local-capability-builder.ts` | Capabilities locales | ~535 lignes |
+| `cache-manager.ts` | CLI cache | ~171 lignes |
+| `cache/device-selection.ts` | Algo sélection devices | ~181 lignes |
+| `cache/app-cache.ts` | Gestion cache apps | ~232 lignes |
+| `cache/device-cache.ts` | Gestion cache devices | ~231 lignes |
+| `cache/cache-display.ts` | Affichage cache | ~218 lignes |
 
 **Chaque fichier a UNE responsabilité claire** ✅
+
+> **Note :** Le module `cache-manager.ts` (anciennement 1008 lignes) a été refactoré en 5 modules SRP dans `tools/cache/`.
 
 ---
 
