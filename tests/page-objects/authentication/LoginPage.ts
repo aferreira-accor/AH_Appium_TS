@@ -1,4 +1,5 @@
 import { BasePage } from "../base/BasePage";
+import { isLocalMode } from "../../step-definitions/hooks/session-management.shared";
 
 export class LoginPage extends BasePage {
   // Selectors
@@ -23,24 +24,24 @@ export class LoginPage extends BasePage {
   };
 
   async waitForLoginPage(): Promise<void> {
-    if (driver.isIOS) {
-      try {
-        await driver.dismissAlert();
-        console.log("[LOGIN] ✅ Apple Account alert dismissed");
-      } catch {
-        console.log("[LOGIN] No Apple Account alert detected");
+    // Dismiss Apple Account alert on BrowserStack iOS
+    if (driver.isIOS && !isLocalMode()) {
+      const maxAttempts = 5;
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          const alertText = await driver.getAlertText();
+          if (alertText) {
+            await driver.dismissAlert();
+            console.log(
+              `[LOGIN] ✅ Alert dismissed: "${alertText.substring(0, 50)}..."`
+            );
+            break;
+          }
+        } catch {
+          // No alert present
+        }
+        await driver.pause(1000);
       }
-    }
-
-    // Wait with countdown for app to stabilize
-    const totalWaitMs = 10000;
-    const intervalMs = 1000;
-    const totalSeconds = totalWaitMs / 1000;
-
-    console.log(`[LOGIN] ⏳ Waiting ${totalSeconds}s for app to stabilize...`);
-    for (let i = 1; i <= totalSeconds; i++) {
-      await driver.pause(intervalMs);
-      console.log(`[LOGIN] ⏱️  ${i}s / ${totalSeconds}s`);
     }
 
     const loginButton = driver.isIOS
@@ -48,6 +49,20 @@ export class LoginPage extends BasePage {
       : this.selectors.android.loginButton;
     await this.waitForElement(loginButton);
     console.log(`[LOGIN] ✅ Login button found`);
+  }
+
+  async goToLoginForm(): Promise<void> {
+    const loginButton = driver.isIOS
+      ? this.selectors.ios.loginButton
+      : this.selectors.android.loginButton;
+    await this.waitAndTap(loginButton);
+    console.log(`[LOGIN] ✅ Clicked on Sign In button`);
+
+    const emailField = driver.isIOS
+      ? this.selectors.ios.emailField
+      : this.selectors.android.emailField;
+    await this.waitForElement(emailField);
+    console.log(`[LOGIN] ✅ Email field found - login form displayed`);
   }
 
   async attemptLogin(email: string, password: string): Promise<void> {
