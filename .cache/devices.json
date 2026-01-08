@@ -22,6 +22,10 @@
         "version": "26"
       },
       {
+        "name": "iPhone 15 Pro Max",
+        "version": "26"
+      },
+      {
         "name": "iPhone 12 Pro",
         "version": "18"
       },
@@ -34,15 +38,11 @@
         "version": "18"
       },
       {
-        "name": "iPhone 12",
-        "version": "17"
-      },
-      {
-        "name": "iPhone 12 Pro",
-        "version": "17"
+        "name": "iPhone 14",
+        "version": "18"
       }
     ],
-    "timestamp": 1765915731186
+    "timestamp": 1767905170809
   },
   "androidDevices": {
     "devices": [
@@ -87,6 +87,6 @@
         "version": "14.0"
       }
     ],
-    "timestamp": 1765915732413
+    "timestamp": 1767893045515
   }
 }
