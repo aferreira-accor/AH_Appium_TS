@@ -14,6 +14,7 @@ import { resolveAppInfo } from "./utils/app-resolver";
 import { resolveDevicesFromCache } from "./utils/device-cache-resolver";
 import { BROWSERSTACK_PROJECT_NAME } from "./browserstack-config-builder";
 import { getDefaultLocaleConfig, type LocaleConfig } from "./locale-configs";
+import { setDevicePool } from "../../tests/support/capability-store";
 
 // Global locale configuration - can be overridden by Cucumber steps
 // Default is fr_FR (French market)
@@ -378,7 +379,6 @@ export function generateAndroidCapabilities(
       : APP_CONFIG.androidInhouse;
 
   // Initialize device pool for session rotation (BrowserStack per-scenario sessions)
-  const { setDevicePool } = require('../../tests/support/capability-store');
   const devicePoolData = deviceSelection.selectedDevices.map(d => ({ name: d.name, version: d.version }));
   setDevicePool(devicePoolData);
 
@@ -428,7 +428,6 @@ export function generateiOSCapabilities(
     effectiveBuild === "store" ? APP_CONFIG.iosStore : APP_CONFIG.iosSandbox;
 
   // Initialize device pool for session rotation (BrowserStack per-scenario sessions)
-  const { setDevicePool } = require('../../tests/support/capability-store');
   const devicePoolData = selection.selectedDevices.map(d => ({ name: d.name, version: d.version }));
   setDevicePool(devicePoolData);
 

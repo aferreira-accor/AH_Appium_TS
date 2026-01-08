@@ -1,5 +1,6 @@
 import type { Options } from "@wdio/types";
 import path from "path";
+import { setDevicePool, getDevicePool, getDeviceByIndex, storeOriginalCapabilities } from '../tests/support/capability-store';
 
 const projectRoot = path.resolve(__dirname, '..');
 
@@ -75,7 +76,6 @@ export const config = {
         const devicePoolData = appiumOptions?.wdioDevicePool as Array<{ name: string; version: string }> | undefined;
 
         if (devicePoolData && devicePoolData.length > 0) {
-          const { setDevicePool, getDevicePool } = require('../tests/support/capability-store');
           const currentPool = getDevicePool();
 
           // Only initialize if pool is empty (first session)
@@ -86,7 +86,6 @@ export const config = {
         }
 
         // Get next device from the pool for this session
-        const { getDeviceByIndex } = require('../tests/support/capability-store');
         const nextDevice = await getDeviceByIndex();
 
         if (nextDevice) {
@@ -97,7 +96,6 @@ export const config = {
       }
 
       // Store original capabilities for session reload (BrowserStack per-scenario sessions)
-      const { storeOriginalCapabilities } = require('../tests/support/capability-store');
       storeOriginalCapabilities(capsObj);
 
       const get = (obj: Record<string, unknown>, key: string): string => (typeof obj[key] === 'string' ? obj[key] as string : '');

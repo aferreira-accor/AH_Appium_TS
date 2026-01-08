@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
 import { config as baseConfig } from "../base.conf";
 import { globSync } from 'glob';
 import type { Options } from "@wdio/types";
@@ -85,10 +87,6 @@ export function createBrowserStackConfig(
     if (!isWorker) {
       console.log(`[CONFIG] Parallel mode: ${sessionCount} concurrent worker(s)`);
     }
-
-    // Import fs for directory scanning
-    const fs = require('fs');
-    const path = require('path');
 
     // Find locale subdirectories (format: locale__language__timezone)
     const allEntries = fs.readdirSync(tmpSpecDir);
@@ -257,96 +255,9 @@ export function createBrowserStackConfig(
       console.log(`[CONFIG] Using ${effectiveSessionCount} parallel sessions for ${actualSpecCount} spec file(s)`);
     }
 
-    // ========================================
-    // MULTI-LOCALE DETECTION FROM CUCUMBER TAGS
-    // ========================================
-    // Parse feature files to detect ALL unique locales in matching scenarios
-    // LOCALE DETECTION TEMPORARILY DISABLED
-    // TODO: Re-enable multi-locale mode when we need dedicated workers per locale
-    // For now, using standard distribution mode for even scenario distribution across workers
-    /*
-    // This creates one capability per locale for true multi-locale testing
-    console.log("\n[LOCALE DETECTION] Scanning feature files for locale tags...");
-
-    let detectedLocales: Array<{ localeId: string; scenarioTags: string[] }> = [];
-
-    // If we have tags, scan files to extract all scenarios and their locales
-    if (tags && specsToRun) {
-      // Resolve spec files from patterns
-      const specPattern = Array.isArray(specsToRun) ? specsToRun[0] : specsToRun;
-      const featureFiles = specPattern ? globSync(specPattern) : [];
-
-      console.log(`[LOCALE DETECTION] Scanning ${featureFiles.length} feature file(s)...`);
-
-      // Collect unique locale configurations from all matching scenarios across all files
-      // Key is a stringified version of the locale config for deduplication
-      const localeConfigMap = new Map<string, { config: LocaleConfig; tags: string[] }>();
-
-      for (const featureFile of featureFiles) {
-        // Extract all scenarios with their locale info from this file
-        const scenarios = extractAllScenariosWithLocales(featureFile, tags);
-
-        for (const scenario of scenarios) {
-          // Check if scenario has any locale-related tags
-          if (hasLocaleConfiguration(scenario.tags)) {
-            // Build complete locale config from tags (with fallback to defaults)
-            const localeConfig = buildLocaleConfigFromTags(scenario.tags);
-
-            // Create unique key for this locale configuration
-            const configKey = `${localeConfig.locale || 'default'}__${localeConfig.language || 'default'}__${localeConfig.timezone || 'default'}`;
-
-            if (!localeConfigMap.has(configKey)) {
-              localeConfigMap.set(configKey, {
-                config: localeConfig,
-                tags: scenario.tags,
-              });
-            }
-          }
-        }
-      }
-
-      // Convert to array - use locale as localeId for backwards compatibility
-      detectedLocales = Array.from(localeConfigMap.values()).map(({ config, tags }) => ({
-        localeId: config.locale || 'fr_FR',
-        scenarioTags: tags,
-      }));
-
-      if (detectedLocales.length > 0) {
-        console.log(`[LOCALE DETECTION] ✓ Found ${detectedLocales.length} unique locale configuration(s):`);
-        for (const { scenarioTags } of detectedLocales) {
-          const config = buildLocaleConfigFromTags(scenarioTags);
-          console.log(`[LOCALE DETECTION]   - locale: ${config.locale}, language: ${config.language}, timezone: ${config.timezone}`);
-        }
-      } else {
-        console.log("[LOCALE DETECTION] No locale tags found, using default (fr_FR)");
-      }
-    }
-
-    // Generate capabilities based on session count
-    // Note: Even if locale tags are detected, we use standard distribution mode
-    // Locale info is stored in capabilities but scenarios are distributed normally by WebdriverIO
-    let capabilities: any[];
-    let finalMaxInstances: number;
-
-    if (detectedLocales.length > 0) {
-      console.log(`[CONFIG] Detected ${detectedLocales.length} locale(s) - locale info will be available in capabilities`);
-    }
-
-    // Always use standard mode: scenarios distributed evenly across workers
-    capabilities = capabilityGenerator(capabilityCount);
-    finalMaxInstances = effectiveSessionCount;
-
-    console.log(`[CONFIG] Standard distribution mode: ${finalMaxInstances} parallel worker(s)`);
-    console.log(`[CONFIG] Scenarios will be distributed evenly across workers`);
-    */
-
-    // Using standard distribution mode: scenarios distributed evenly across workers
-    console.log("\n[CONFIG] Using standard distribution mode (locale detection disabled)");
-
+    // Standard distribution mode: scenarios distributed evenly across workers
     const capabilities = capabilityGenerator(capabilityCount);
     const finalMaxInstances = effectiveSessionCount;
-
-    console.log(`[CONFIG] ${finalMaxInstances} parallel worker(s) will distribute scenarios evenly`);
 
     return {
       ...baseConfig,
