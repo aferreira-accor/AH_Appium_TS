@@ -7,7 +7,7 @@ import type { DeviceInfo } from "../../config/capabilities/api/browserstack-devi
 
 // Default minimum OS versions for device caching
 export const DEFAULT_MIN_ANDROID_VERSION = "14.0"; // Android 14+ (Google Play support)
-export const DEFAULT_MIN_IOS_VERSION = "17"; // iOS 17+ (Active Apple support)
+export const DEFAULT_MIN_IOS_VERSION = "18"; // iOS 18+ (App minimum requirement)
 
 // Default cache size (matches typical thread count)
 export const DEFAULT_CACHE_SIZE = 10;

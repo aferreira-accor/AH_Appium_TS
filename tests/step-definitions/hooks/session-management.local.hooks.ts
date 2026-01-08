@@ -133,6 +133,10 @@ if (!isLocalMode()) {
 
       await browser.reloadSession(newCaps as Record<string, unknown>);
 
+      // Note: Locale is applied via capabilities in reloadSession
+      // No additional mobile commands needed - appium:language and appium:locale
+      // are applied when the new session is created
+
       if (locale && language) {
         console.log(`[LOCAL] ✅ Session reloaded with locale=${locale}, language=${language}`);
       } else {

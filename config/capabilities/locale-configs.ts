@@ -20,6 +20,8 @@
  * Note: geoLocation (IP Geolocation) removed - requires BrowserStack Enterprise plan
  */
 
+import type { CucumberScenario, CucumberTag } from "../../tests/support/types";
+
 export interface LocaleConfig {
   /** System UI language (e.g., "fr", "en", "ja") - Optional, can be overridden by @language: tag */
   language?: string;
@@ -252,4 +254,60 @@ export function hasLocaleConfiguration(tags: string[]): boolean {
       tag.startsWith("@language:") ||
       tag.startsWith("@timezone:")
   );
+}
+
+/**
+ * Extract locale configuration from a Cucumber scenario object
+ * This is a convenience wrapper around extractLocaleFromTags for Cucumber hooks
+ * @param scenario - Cucumber scenario object with pickle.tags
+ * @returns LocaleConfig with extracted values
+ */
+export function extractLocaleFromScenario(scenario: CucumberScenario): LocaleConfig {
+  const tags = scenario.pickle.tags.map((tag: CucumberTag) => tag.name);
+  return extractLocaleFromTags(tags);
+}
+
+/**
+ * Extract locale from a tag expression string (e.g., "@locale:fr_FR and @language:fr")
+ * Uses regex to extract locale tags from a tag expression
+ * @param tagExpression - Tag expression string
+ * @returns LocaleConfig with extracted values
+ */
+export function extractLocaleFromTagExpression(tagExpression?: string): LocaleConfig {
+  if (!tagExpression) return {};
+
+  const config: LocaleConfig = {};
+
+  // Extract @locale:XX_YY using regex (handles both fr_FR and fr-FR formats)
+  const localeMatch = tagExpression.match(/@locale:([a-z]{2}[_-][A-Z]{2})/i);
+  if (localeMatch) {
+    config.locale = localeMatch[1].replace('-', '_');
+  }
+
+  // Extract @language:XX
+  const languageMatch = tagExpression.match(/@language:([a-z]{2})/i);
+  if (languageMatch) {
+    config.language = languageMatch[1].toLowerCase();
+  }
+
+  // Extract @timezone:XXX
+  const timezoneMatch = tagExpression.match(/@timezone:([a-zA-Z_]+)/);
+  if (timezoneMatch) {
+    config.timezone = timezoneMatch[1];
+  }
+
+  return config;
+}
+
+/**
+ * Build directory name for locale-based file organization
+ * Format: locale__language__timezone (e.g., "fr_FR__fr__Paris")
+ * @param config - LocaleConfig to build directory name from
+ * @returns Directory name string
+ */
+export function buildLocaleDirectoryName(config: LocaleConfig): string {
+  const locale = config.locale || 'fr_FR';
+  const language = config.language || locale.split('_')[0] || 'fr';
+  const timezone = config.timezone || 'Paris';
+  return `${locale}__${language}__${timezone}`;
 }

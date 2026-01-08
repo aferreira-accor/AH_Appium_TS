@@ -3,31 +3,11 @@
  * Used by both local and BrowserStack session management
  */
 
-import type { CucumberScenario, CucumberTag } from "../../support/types";
+import type { CucumberScenario } from "../../support/types";
+import { extractLocaleFromScenario } from "../../../config/capabilities/locale-configs";
 
-/**
- * Extract locale and language from scenario tags
- * @param scenario Cucumber scenario object
- * @returns Object with locale and language, or undefined if not found
- */
-export function extractLocaleFromScenario(scenario: CucumberScenario): {
-  locale?: string;
-  language?: string;
-  timezone?: string;
-} {
-  const tags = scenario.pickle.tags.map((tag: CucumberTag) => tag.name);
-
-  const localeTag = tags.find((tag: string) => tag.startsWith('@locale:'));
-  const locale = localeTag ? localeTag.replace('@locale:', '') : undefined;
-
-  const languageTag = tags.find((tag: string) => tag.startsWith('@language:'));
-  const language = languageTag ? languageTag.replace('@language:', '') : undefined;
-
-  const timezoneTag = tags.find((tag: string) => tag.startsWith('@timezone:'));
-  const timezone = timezoneTag ? timezoneTag.replace('@timezone:', '') : undefined;
-
-  return { locale, language, timezone };
-}
+// Re-export for backward compatibility
+export { extractLocaleFromScenario };
 
 /**
  * Check if we're running in local mode (not BrowserStack)

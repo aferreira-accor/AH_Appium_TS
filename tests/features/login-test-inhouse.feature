@@ -1,5 +1,5 @@
-@EnvironmentCheck
-Feature: Test Login
+@LoginTest-Inhouse
+Feature: Test Login - Inhouse Builds
 
   @locale:fr_FR @language:fr @timezone:Paris
   Scenario: Test Login 1

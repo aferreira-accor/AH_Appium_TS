@@ -4,6 +4,8 @@ import { localDevices } from "../devices/local-devices";
 import { config as baseConfig } from "../base.conf";
 import { findMatchingFeatureFile } from "./utils/cucumber-tag-parser";
 import { readFileSync } from "fs";
+import { extractLocaleFromTagExpression } from "./locale-configs";
+import { APP_CONFIGS, determineAndroidAppFromTags, determineIOSBundleFromTags } from "./app-configs";
 
 // ----- Helpers -----
 
@@ -15,28 +17,6 @@ function getEnv(name: string): string | undefined {
 function getFirstDevice(platform: "android" | "ios", deviceName?: string) {
   const devices = filterDevicesByName(localDevices[platform], deviceName);
   return devices[0];
-}
-
-/**
- * Extract locale and language from Cucumber tags
- * @param tags - Tag expression string (e.g., "@locale:fr_FR and @language:fr")
- * @returns Object with locale and language, or undefined if not found
- */
-function extractLocaleFromTags(tags?: string): {
-  locale?: string;
-  language?: string;
-} {
-  if (!tags) return {};
-
-  // Extract @locale:XX_YY
-  const localeMatch = tags.match(/@locale:([a-z]{2}_[A-Z]{2})/);
-  const locale = localeMatch ? localeMatch[1] : undefined;
-
-  // Extract @language:XX
-  const languageMatch = tags.match(/@language:([a-z]{2})/);
-  const language = languageMatch ? languageMatch[1] : undefined;
-
-  return { locale, language };
 }
 
 /**
@@ -118,91 +98,18 @@ function findAllTagsFromMatchingScenario(
  * @param tagExpression - Tag expression used for filtering (e.g., "@Test")
  * @returns Object with locale and language from the matching scenario
  */
-function extractLocaleFromScenario(tagExpression?: string): {
+function extractLocaleFromScenarioTags(tagExpression?: string): {
   locale?: string;
   language?: string;
+  timezone?: string;
 } {
   if (!tagExpression) return {};
 
   // First, find all tags from the matching scenario
   const allScenarioTags = findAllTagsFromMatchingScenario(tagExpression);
 
-  // Then extract locale and language from those tags
-  return extractLocaleFromTags(allScenarioTags);
-}
-
-// ----- App Configuration Constants -----
-
-const APP_CONFIGS = {
-  firebase: {
-    appPackage: "dev.firebase.appdistribution",
-    appActivity: "dev.firebase.appdistribution.MainActivity",
-  },
-  androidInhouse: {
-    appPackage: "com.accor.appli.hybrid.inhouse",
-    appActivity:
-      "com.accor.appconfiguration.appconfiguration.view.AppConfigurationActivity",
-  },
-  androidStore: {
-    appPackage: "com.accor.appli.hybrid",
-  },
-  iosSandbox: {
-    bundleId: "fr.accor.push.sandbox",
-    getArguments: () => [
-      "-debug_flushAuthToken",
-      "true",  // Clear auth tokens on app launch (enables fresh start between scenarios)
-      "-debug_environment",
-      getEnv("IOS_SANDBOX_LOCAL_TEST_ENVIRONMENT") || "rec2",
-      "-debug_qa_enable_ids",
-      "true",
-    ],
-  },
-  iosStore: {
-    bundleId: "fr.accor.push",
-    // ⚠️ iOS Store (build RELEASE) n'a AUCUN flag de debug compilé !
-    // Tous les process arguments sont ignorés :
-    // - debug_qa_enable_ids → requiert DEBUG_QA_ID_ENABLE (absent en Store)
-    // - debug_environment → requiert DEBUG_QA_PERSIST_SETTINGS (absent en Store)
-    // - debug_flushAuthToken → requiert !RELEASE (RELEASE est défini en Store)
-    // Voir docs/IOS_ANDROID_RESET_DIFFERENCES.md pour détails
-    getArguments: () => [],  // Aucun argument utile en Store
-  },
-  testflight: {
-    bundleId: "com.apple.TestFlight",
-  },
-} as const;
-
-function determineAndroidAppFromTags(tags?: string): {
-  appPackage: string;
-  appActivity?: string;
-} {
-  if (
-    tags?.match("@firebase and @android_inhouse") ||
-    tags?.match("@firebase and @android_store") ||
-    tags?.match("@firebase")
-  ) {
-    return APP_CONFIGS.firebase;
-  }
-  if (tags?.includes("@android_store")) {
-    return APP_CONFIGS.androidStore;
-  }
-  // default to inhouse
-  return APP_CONFIGS.androidInhouse;
-}
-
-function determineIOSBundleFromTags(tags?: string): string {
-  if (
-    tags?.match("@testflight and @ios_sandbox") ||
-    tags?.match("@testflight and @ios_store") ||
-    tags?.match("@testflight")
-  ) {
-    return APP_CONFIGS.testflight.bundleId;
-  }
-  if (tags?.includes("@ios_store")) {
-    return APP_CONFIGS.iosStore.bundleId;
-  }
-  // default to sandbox
-  return APP_CONFIGS.iosSandbox.bundleId;
+  // Then extract locale and language from those tags using the unified function
+  return extractLocaleFromTagExpression(allScenarioTags);
 }
 
 /**
@@ -411,7 +318,7 @@ export function generateLocalAndroidInhouseCapabilities() {
   const tags = getEnv("ANDROID_INHOUSE_LOCAL_TAGS");
 
   // Extract locale from first matching scenario
-  const { locale, language } = extractLocaleFromScenario(tags);
+  const { locale, language } = extractLocaleFromScenarioTags(tags);
 
   // Convert locale to Android format if needed
   let androidLocale: string | undefined;
@@ -451,7 +358,7 @@ export function generateLocalAndroidStoreCapabilities() {
   const tags = getEnv("ANDROID_STORE_LOCAL_TAGS");
 
   // Extract locale from first matching scenario
-  const { locale, language } = extractLocaleFromScenario(tags);
+  const { locale, language } = extractLocaleFromScenarioTags(tags);
 
   // Convert locale to Android format if needed
   let androidLocale: string | undefined;
@@ -488,7 +395,7 @@ export function generateLocalIosSandboxCapabilities() {
   const tags = getEnv("IOS_SANDBOX_LOCAL_TAGS");
 
   // Extract locale from first matching scenario
-  const { locale, language } = extractLocaleFromScenario(tags);
+  const { locale, language } = extractLocaleFromScenarioTags(tags);
 
   // For iOS: use full locale format (e.g., "fr_FR")
   const iosLocale = locale;
@@ -513,7 +420,7 @@ export function generateLocalIosStoreCapabilities() {
   const tags = getEnv("IOS_STORE_LOCAL_TAGS");
 
   // Extract locale from first matching scenario
-  const { locale, language } = extractLocaleFromScenario(tags);
+  const { locale, language } = extractLocaleFromScenarioTags(tags);
 
   // For iOS: use full locale format (e.g., "fr_FR")
   const iosLocale = locale;

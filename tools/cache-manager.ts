@@ -39,7 +39,7 @@ function parseVersionFilters(args: string[]): { minVersion?: string; maxVersion?
       console.error(`     npm run update-devices:android -- min 15`);
       console.error(`     npm run update-devices:android -- max 18`);
       console.error(`     npm run update-devices:android -- min 15 max 18`);
-      console.error(`     npm run show-devices:ios -- min 17 max 26`);
+      console.error(`     npm run show-devices:ios -- min 18 max 26`);
       console.error(``);
       console.error(`   Without arguments, default filters are applied:`);
       console.error(`     Android: >= ${DEFAULT_MIN_ANDROID_VERSION}`);

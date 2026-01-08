@@ -12,6 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import { globSync } from 'glob';
 import parseTagExpression from '@cucumber/tag-expressions';
+import { extractLocaleFromTags, buildLocaleDirectoryName } from '../config/capabilities/locale-configs';
 
 interface ScenarioInfo {
   name: string;
@@ -20,41 +21,6 @@ interface ScenarioInfo {
   featureName: string;
   featureDescription: string;
   featureTags: string[];
-}
-
-interface LocaleConfig {
-  locale: string;
-  language: string;
-  timezone: string;
-  directoryName: string; // Format: locale__language__timezone
-}
-
-/**
- * Extract locale configuration from scenario tags
- * Returns locale config or default (fr_FR/fr/Paris) if no locale tags found
- */
-function extractLocaleFromTags(tags: string[]): LocaleConfig {
-  let locale = 'fr_FR';
-  let language = 'fr';
-  let timezone = 'Paris';
-
-  // Parse tags to find locale-specific ones
-  for (const tag of tags) {
-    if (tag.startsWith('@locale:')) {
-      locale = tag.replace('@locale:', '');
-    } else if (tag.startsWith('@language:')) {
-      language = tag.replace('@language:', '');
-    } else if (tag.startsWith('@timezone:')) {
-      timezone = tag.replace('@timezone:', '');
-    }
-  }
-
-  return {
-    locale,
-    language,
-    timezone,
-    directoryName: `${locale}__${language}__${timezone}`
-  };
 }
 
 /**
@@ -222,12 +188,12 @@ export function splitScenarios(sourceDir: string, tmpDir: string, tagFilter?: st
     scenariosToWrite.forEach((scenario) => {
       const allTags = [...scenario.featureTags, ...scenario.tags];
       const localeConfig = extractLocaleFromTags(allTags);
+      const directoryName = buildLocaleDirectoryName(localeConfig);
 
-      const key = localeConfig.directoryName;
-      if (!localeGroups.has(key)) {
-        localeGroups.set(key, []);
+      if (!localeGroups.has(directoryName)) {
+        localeGroups.set(directoryName, []);
       }
-      localeGroups.get(key)!.push(scenario);
+      localeGroups.get(directoryName)!.push(scenario);
     });
 
     // Process each locale group
