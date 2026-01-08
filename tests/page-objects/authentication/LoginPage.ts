@@ -67,17 +67,6 @@ export class LoginPage extends BasePage {
 
   async attemptLogin(email: string, password: string): Promise<void> {
     console.log(`[LOGIN] 🔐 Attempting login with email: ${email}`);
-
-    // Click on "Sign In" button to go to login form
-    const signInButton = driver.isIOS
-      ? this.selectors.ios.loginButton
-      : this.selectors.android.loginButton;
-    await this.waitAndTap(signInButton);
-    console.log(`[LOGIN] ✅ Clicked on Sign In button`);
-
-    // Wait for login form to appear
-    await driver.pause(2000);
-
     // Fill email field
     const emailSelector = driver.isIOS
       ? this.selectors.ios.emailField
@@ -102,8 +91,7 @@ export class LoginPage extends BasePage {
     await connexionButton.click();
     console.log(`[LOGIN] ✅ Clicked on Connexion button`);
 
-    // Wait to see the result
-    await driver.pause(3000);
+    await driver.pause(10000);
     console.log(`[LOGIN] ⏳ Waiting for login result...`);
   }
 }

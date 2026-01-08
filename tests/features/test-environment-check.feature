@@ -7,7 +7,7 @@ Feature: Test Login
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
-    When I attempt to login with email "wotticrekila-1015@yopmail.com" and password "Password1"
+    When I attempt to login with email "classic_auto@yopmail.com" and password "Password1"
 
   @locale:de_DE @language:de @timezone:Berlin
   Scenario: Test Login 2
@@ -15,7 +15,7 @@ Feature: Test Login
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
-    When I attempt to login with email "wotticrekila-1015@yopmail.com" and password "Password1"
+    When I attempt to login with email "classic_auto@yopmail.com" and password "Password1"
 
   @locale:en_US @language:en @timezone:New_York
   Scenario: Test Login 3
@@ -23,7 +23,7 @@ Feature: Test Login
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
-    When I attempt to login with email "wotticrekila-1015@yopmail.com" and password "Password1"
+    When I attempt to login with email "classic_auto@yopmail.com" and password "Password1"
 
   @locale:es_ES @language:es @timezone:Madrid
   Scenario: Test Login 4
@@ -31,7 +31,7 @@ Feature: Test Login
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
-    When I attempt to login with email "wotticrekila-1015@yopmail.com" and password "Password1"
+    When I attempt to login with email "classic_auto@yopmail.com" and password "Password1"
 
   @locale:pt_BR @language:pt @timezone:Sao_Paulo
   Scenario: Test Login 5
@@ -39,4 +39,4 @@ Feature: Test Login
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
-    When I attempt to login with email "wotticrekila-1015@yopmail.com" and password "Password1"
+    When I attempt to login with email "classic_auto@yopmail.com" and password "Password1"
