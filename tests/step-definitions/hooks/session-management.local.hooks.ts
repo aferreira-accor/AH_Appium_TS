@@ -38,14 +38,21 @@ if (!isLocalMode()) {
     scenarioCount++;
     const { locale, language, timezone } = extractLocaleFromScenario(scenario);
 
-    // First scenario: use existing session
+    // First scenario: check if locale differs from initial session
     if (isFirstScenario) {
       isFirstScenario = false;
-      console.log(`\n[LOCAL] 🚀 Starting first scenario (worker's initial session)`);
+      console.log(`\n[LOCAL] 🚀 Starting first scenario`);
       console.log(`[LOCAL]    Scenario: ${scenario.pickle.name}`);
-      if (locale || language) {
-        console.log(`[LOCAL] ℹ️  Tags: locale=${locale}, language=${language}`);
+
+      // If first scenario has locale tags, reload session to apply them
+      // (initial session uses default locale from config)
+      if (locale && language) {
+        console.log(`[LOCAL] 🌍 First scenario has locale tags - reloading session`);
+        await reloadSessionWithLocale(scenario, scenarioCount, locale, language, timezone);
+        return;
       }
+
+      console.log(`[LOCAL] ℹ️  Using initial session (no locale override)`);
       return;
     }
 

@@ -7,7 +7,7 @@ Feature: Test Login - Inhouse Builds
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
-    When I attempt to login with email "classic_auto@yopmail.com" and password "Password1"
+    When I attempt to login with email "diamond_auto1@yopmail.com" and password "Password1"
 
   @locale:de_DE @language:de @timezone:Berlin
   Scenario: Test Login 2
@@ -17,7 +17,7 @@ Feature: Test Login - Inhouse Builds
     When I click on the login button
     When I attempt to login with email "classic_auto@yopmail.com" and password "Password1"
 
-  @locale:en_US @language:en @timezone:New_York
+  @locale:en_GB @language:en @timezone:New_York
   Scenario: Test Login 3
     Given The app is launched
     When I accept the cookies
@@ -33,7 +33,7 @@ Feature: Test Login - Inhouse Builds
     When I click on the login button
     When I attempt to login with email "classic_auto@yopmail.com" and password "Password1"
 
-  @locale:pt_BR @language:pt @timezone:Sao_Paulo
+  @Test @locale:pt_BR @language:pt @timezone:Sao_Paulo
   Scenario: Test Login 5
     Given The app is launched
     When I accept the cookies

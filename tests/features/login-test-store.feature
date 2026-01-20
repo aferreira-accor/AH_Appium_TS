@@ -33,7 +33,7 @@ Feature: Test Login - Store Builds
     When I click on the login button
     When I attempt to login with email "gigiuser@yopmail.com" and password "Password1"
 
-  @locale:pt_BR @language:pt @timezone:Sao_Paulo
+  @Test1 @locale:pt_BR @language:pt @timezone:Sao_Paulo
   Scenario: Test Login 5
     Given The app is launched
     When I accept the cookies
