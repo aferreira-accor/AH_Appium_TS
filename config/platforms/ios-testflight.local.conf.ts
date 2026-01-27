@@ -53,8 +53,8 @@ export const config = {
 
   reporters: baseConfig.reporters,
 
-  // Let the builder pick TestFlight bundle when '@testflight' is present in tags
-  capabilities: generateLocalIOSCapabilities(),
+  // Always use TestFlight bundle - this is a TestFlight-specific config
+  capabilities: generateLocalIOSCapabilities({ forceTestFlight: true }),
 
   services: [
     ['appium', {
