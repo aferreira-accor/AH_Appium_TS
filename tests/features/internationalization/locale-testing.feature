@@ -1,35 +1,35 @@
 @Internationalization
 Feature: Application testing in different international contexts
 
-  @locale:fr_FR @language:fr @timezone:Paris @Test
+  @locale:fr_FR @language:fr @timezone:Paris
   Scenario: Test scenario 1 - French locale (France)
     Given The app is launched
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
 
-  @locale:de_DE @language:de @timezone:Berlin @Test
+  @locale:de_DE @language:de @timezone:Berlin
   Scenario: Test scenario 2 - German locale (Germany)
     Given The app is launched
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
 
-  @locale:en_US @language:en @timezone:New_York @Test
+  @locale:en_US @language:en @timezone:New_York
   Scenario: Test scenario 3 - English locale (United States)
     Given The app is launched
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
 
-  @locale:es_ES @language:es @timezone:Madrid @Test
+  @locale:es_ES @language:es @timezone:Madrid
   Scenario: Test scenario 4 - Spanish locale (Spain)
     Given The app is launched
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
 
-  @locale:pt_BR @language:pt @timezone:Sao_Paulo @Test
+  @locale:pt_BR @language:pt @timezone:Sao_Paulo
   Scenario: Test scenario 5 - Portuguese locale (Brazil)
     Given The app is launched
     When I accept the cookies

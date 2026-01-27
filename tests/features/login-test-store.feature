@@ -1,13 +1,13 @@
 @LoginTest-Store
 Feature: Test Login - Store Builds
 
-  @locale:fr_FR @language:fr @timezone:Paris
+  @locale:fr_FR @language:fr @timezone:Paris @Test1
   Scenario: Test Login 1
     Given The app is launched
     When I accept the cookies
     Then The login page is displayed
     When I click on the login button
-    When I attempt to login with email "gigiuser@yopmail.com" and password "Password1"
+    When I attempt to login with email "agigiuser@yopmail.com" and password "Password1"
 
   @locale:de_DE @language:de @timezone:Berlin
   Scenario: Test Login 2
@@ -33,7 +33,7 @@ Feature: Test Login - Store Builds
     When I click on the login button
     When I attempt to login with email "gigiuser@yopmail.com" and password "Password1"
 
-  @Test1 @locale:pt_BR @language:pt @timezone:Sao_Paulo
+  @locale:pt_BR @language:pt @timezone:Sao_Paulo
   Scenario: Test Login 5
     Given The app is launched
     When I accept the cookies
