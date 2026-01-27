@@ -13,6 +13,7 @@ allure-results/
 coverage/
 screenshots/
 logs/
+debug-output/
 browserstack.err
 
 # Environment files
