@@ -78,7 +78,7 @@
   },
   "dependencies": {
     "@wdio/types": "^9.23.2",
-    "axios": "^1.13.3",
+    "axios": "^1.13.4",
     "browserstack-local": "^1.5.8",
     "chai": "^6.2.2",
     "dotenv": "^17.2.3",
