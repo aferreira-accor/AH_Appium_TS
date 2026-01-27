@@ -11,8 +11,13 @@ export abstract class BasePage {
   }
 
   protected async waitAndTap(selector: string, timeout?: number): Promise<void> {
-    await this.waitForElement(selector, timeout);
-    await $(selector).click();
+    const element = $(selector);
+    if (typeof timeout === 'number') {
+      await element.waitForDisplayed({ timeout });
+    } else {
+      await element.waitForDisplayed();
+    }
+    await element.click();
   }
 
   protected async waitAndType(selector: string, text: string, timeout?: number): Promise<void> {
@@ -50,9 +55,15 @@ export abstract class BasePage {
   ): Promise<void> {
     const element = $(selector);
 
-    // First try: check if element already exists in DOM
+    // First try: check if element already exists in DOM and is visible
     const exists = await element.isExisting();
     if (exists) {
+      const isDisplayed = await element.isDisplayed().catch(() => false);
+      if (isDisplayed) {
+        // Element is already visible on screen, no need to scroll
+        return;
+      }
+      // Element exists but not visible, scroll it into view
       await element.scrollIntoView();
       return;
     }
@@ -72,13 +83,16 @@ export abstract class BasePage {
       if (driver.isIOS) {
         await driver.execute("mobile: scroll", { direction: "down" });
       } else {
-        // Android: swipe gesture
+        // Android: use mobile: scrollGesture (modern API)
         const { width, height } = await driver.getWindowSize();
-        await driver.touchAction([
-          { action: "press", x: width / 2, y: height * 0.8 },
-          { action: "moveTo", x: width / 2, y: height * 0.2 },
-          "release",
-        ]);
+        await driver.execute('mobile: scrollGesture', {
+          left: width * 0.1,
+          top: height * 0.5,
+          width: width * 0.8,
+          height: height * 0.3,
+          direction: 'down',
+          percent: 0.75,
+        });
       }
       await driver.pause(500);
     }
@@ -99,21 +113,21 @@ export abstract class BasePage {
 
   async getCurrentActivity(): Promise<string> {
     if (driver.isAndroid) {
-      return await driver.getCurrentActivity();
+      return await driver.execute('mobile: getCurrentActivity') as unknown as string;
     }
     return "";
   }
 
   async getCurrentPackage(): Promise<string> {
     if (driver.isAndroid) {
-      return await driver.getCurrentPackage();
+      return await driver.execute('mobile: getCurrentPackage') as unknown as string;
     }
     return "";
   }
 
   async pressBack(): Promise<void> {
     if (driver.isAndroid) {
-      await driver.pressKeyCode(4); // KEYCODE_BACK
+      await driver.execute('mobile: pressKey', { keycode: 4 }); // KEYCODE_BACK
     }
   }
 

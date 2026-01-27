@@ -23,7 +23,7 @@ export const APP_CONFIGS = {
   /** Firebase App Distribution (for testing internal builds) */
   firebase: {
     appPackage: "dev.firebase.appdistribution",
-    appActivity: "dev.firebase.appdistribution.MainActivity",
+    appActivity: "dev.firebase.appdistribution.main.MainActivity",
   },
 
   /** Android Inhouse build (internal testing) */

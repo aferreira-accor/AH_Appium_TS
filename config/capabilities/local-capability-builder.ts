@@ -256,7 +256,12 @@ export function generateLocalAndroidCapabilities() {
   ];
 }
 
-export function generateLocalIOSCapabilities() {
+type GenerateIOSCapabilitiesOptions = {
+  /** Force TestFlight bundle ID regardless of tags */
+  forceTestFlight?: boolean;
+};
+
+export function generateLocalIOSCapabilities(options?: GenerateIOSCapabilitiesOptions) {
   // Try TestFlight first, then Sandbox, then Store - at least one must be defined
   const deviceName =
     getEnv("IOS_TESTFLIGHT_LOCAL_DEVICE_NAME") ??
@@ -270,18 +275,18 @@ export function generateLocalIOSCapabilities() {
   }
 
   const device = getFirstDevice("ios", deviceName);
-  const tags =
-    getEnv("IOS_TESTFLIGHT_LOCAL_TAGS") ??
-    getEnv("IOS_SANDBOX_LOCAL_TAGS") ??
-    getEnv("IOS_STORE_LOCAL_TAGS");
 
-  if (!tags) {
-    throw new Error(
-      "At least one of IOS_TESTFLIGHT_LOCAL_TAGS, IOS_SANDBOX_LOCAL_TAGS, or IOS_STORE_LOCAL_TAGS must be defined"
-    );
+  // Determine bundle ID: force TestFlight if specified, otherwise use tags
+  let bundleId: string;
+  if (options?.forceTestFlight) {
+    bundleId = APP_CONFIGS.testflight.bundleId;
+  } else {
+    const tags =
+      getEnv("IOS_TESTFLIGHT_LOCAL_TAGS") ??
+      getEnv("IOS_SANDBOX_LOCAL_TAGS") ??
+      getEnv("IOS_STORE_LOCAL_TAGS");
+    bundleId = determineIOSBundleFromTags(tags);
   }
-
-  const bundleId = determineIOSBundleFromTags(tags);
 
   const args =
     bundleId === APP_CONFIGS.iosSandbox.bundleId
@@ -292,7 +297,10 @@ export function generateLocalIOSCapabilities() {
   if (bundleId === APP_CONFIGS.testflight.bundleId) {
     extra["appium:noReset"] = true;
     extra["appium:autoAcceptAlerts"] = true;
+    extra["appium:forceAppLaunch"] = true;
+    extra["appium:shouldTerminateApp"] = true;
   }
+
   return [
     buildSingleIOSCapability({
       platformVersion: device.platformVersion,
@@ -309,6 +317,27 @@ export function generateLocalIOSCapabilities() {
 // These functions automatically detect locale and language from the matching scenario and apply them to the device
 // Example: ANDROID_INHOUSE_LOCAL_TAGS="@Test" will find the scenario with @Test tag and extract its @locale: and @language: tags
 // This allows filtering by any tag while still applying the scenario's locale configuration
+
+export function generateLocalAndroidFirebaseCapabilities() {
+  const device = getFirstDevice(
+    "android",
+    getEnv("ANDROID_FIREBASE_LOCAL_DEVICE_NAME")
+  );
+
+  // Firebase App Distribution - keep app data (consent, app list, etc.)
+  return generateSingleCapability(() => ({
+    ...buildSingleAndroidCapability({
+      platformVersion: device.platformVersion,
+      udid: device.udid,
+      deviceName: device.deviceName,
+      appPackage: APP_CONFIGS.firebase.appPackage,
+      appActivity: APP_CONFIGS.firebase.appActivity,
+    }),
+    "appium:noReset": true,  // Keep App Tester data
+    "appium:forceAppLaunch": true,  // Force launch even with noReset
+    "appium:shouldTerminateApp": true,  // Terminate and restart app
+  }));
+}
 
 export function generateLocalAndroidInhouseCapabilities() {
   const device = getFirstDevice(
